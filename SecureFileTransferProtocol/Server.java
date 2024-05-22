@@ -35,11 +35,11 @@ public class Server {
         try (DataInputStream in = new DataInputStream(clientSocket.getInputStream());
              DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream())) {
 
-            // Send server's public key to client
+
             String publicKeyString = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
             out.writeUTF(publicKeyString);
 
-            // Receive encrypted AES key from client
+
             String encryptedAESKey = in.readUTF();
             String aesKeyString = RSAUtils.decrypt(keyPair.getPrivate(), encryptedAESKey);
             SecretKey aesKey = AESUtils.decryptAESKey(aesKeyString);
@@ -51,7 +51,6 @@ public class Server {
                 String fileName = in.readUTF();
                 sendFile(out, fileName, aesKey);
             } else {
-                // Receive file
                 receiveFile(in, command, aesKey);
             }
 
@@ -83,7 +82,7 @@ public class Server {
             }
         }
 
-        // Decrypt file
+    
         File decryptedFile = new File(SERVER_FOLDER, "decrypted_" + fileName);
         AESUtils.decryptFile(aesKey, encryptedFile, decryptedFile);
 
