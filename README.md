@@ -1,3 +1,15 @@
+==== Udhëzimet e hollësishme se si të ekzekutohet programi [SecureFileTransferProtocol_HybridCryptography] ====
+
+Shkarkimi dhe instalimi i IntelliJ IDEA.
+Shkarkimi dhe instalimi i Git.
+Instalimi i JDK.
+Shkarkoni Repozitorin permes butonit 'code' dhe me pas 'code URL'.
+Klonimi i repository-it permes terminalit me komanden git clone.
+Hapja e projektit, selektimi i dosjes se sapo klonuar nga GitHub.
+Kontrollimi i SDK.
+Importimi i projektit si maven apo gradle.
+Ne fajllat Client dhe Server programi behet "run", dhe ekzekutohet, duke ofruar rezultatin e tij.
+
 
 === Nje pershkrim i shkurter dhe i sakte per fajllin "Client.java" ===
 
