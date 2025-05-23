@@ -124,12 +124,14 @@ bin/zookeeper-server-start.sh config/zookeeper.properties
 bin/kafka-server-start.sh config/server.properties
 
 ### 2. Start Redis
+
 Run Redis for caching user preferences and other data:
 
 ```bash
 redis-server
 
 ### 3. Run Microservices
+
 Start each Spring Boot microservice in the following order to meet dependency requirements:
 
 ## User Service (Authentication & Profiles)
@@ -157,34 +159,39 @@ cd profile-service
 mvn spring-boot:run
 
 ### 4. Expose Stripe Webhook with Ngrok
+
 Expose the Subscription Service’s webhook endpoint (POST /webhook) to Stripe:
 
 ```bash
 ngrok http 8082
 
-5. Run Front-end Server 
+### 5. Run Front-end Server 
 
 ```bash
 cd frontend
 npm install
 npm start
 
+
+
+
 Configuration Notes
 
-Verify application.properties or application.yml files in each service for correct database and broker configuration.
+- ** Verify application.properties or application.yml files in each service for correct database and broker configuration.
 
-Ensure MongoDB and PostgreSQL are running before starting any service.
+- ** Ensure MongoDB and PostgreSQL are running before starting any service.
 
-For production or easier local setup, consider using Docker. Check for a docker-compose.yml file if provided.
+- ** For production or easier local setup, consider using Docker. Check for a docker-compose.yml file if provided.
+
 
 Troubleshooting
 
-Port Conflicts: Ensure the required ports (e.g., 8080, 8081, 8082) are not in use.
+- ** Port Conflicts: Ensure the required ports (e.g., 8080, 8081, 8082) are not in use.
 
-Database Errors: Check if MongoDB and PostgreSQL are accessible and configured correctly.
+- ** Database Errors: Check if MongoDB and PostgreSQL are accessible and configured correctly.
 
-Kafka Issues: Make sure both Zookeeper and Kafka are running and accessible.
+- ** Kafka Issues: Make sure both Zookeeper and Kafka are running and accessible.
 
-Ngrok Issues: Restart Ngrok if the tunnel is unresponsive or changes.
+- ** Ngrok Issues: Restart Ngrok if the tunnel is unresponsive or changes.
 
 
