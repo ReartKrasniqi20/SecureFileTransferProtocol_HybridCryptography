@@ -121,7 +121,7 @@ Launch Kafka and Zookeeper for asynchronous messaging between microservices:
 
 ```bash
 bin/zookeeper-server-start.sh config/zookeeper.properties
-bin/kafka-server-start.sh config/server.properties
+bin/kafka-server-start.sh config/server.properties ```
 
 ### 2. Start Redis
 
@@ -138,7 +138,7 @@ Start each Spring Boot microservice in the following order to meet dependency re
 
 ```bash
 cd user-service
-mvn spring-boot:run
+mvn spring-boot:run ```
 
 ## Subscription Service (Payments via Stripe)
 
@@ -193,5 +193,6 @@ Troubleshooting
 - ** Kafka Issues: Make sure both Zookeeper and Kafka are running and accessible.
 
 - ** Ngrok Issues: Restart Ngrok if the tunnel is unresponsive or changes.
+
 
 
