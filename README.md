@@ -1,59 +1,190 @@
-==== Udhëzimet e hollësishme se si të ekzekutohet programi [SecureFileTransferProtocol_HybridCryptography] ====
+# Anora Streaming Service
 
-Shkarkimi dhe instalimi i IntelliJ IDEA.
-Shkarkimi dhe instalimi i Git.
-Instalimi i JDK.
-Shkarkoni Repozitorin permes butonit 'code' dhe me pas 'code URL'.
-Klonimi i repository-it permes terminalit me komanden git clone.
-Hapja e projektit, selektimi i dosjes se sapo klonuar nga GitHub.
-Kontrollimi i SDK.
-Importimi i projektit si maven apo gradle.
-Ne fajllat Client dhe Server programi behet "run", dhe ekzekutohet, duke ofruar rezultatin e tij.
+Anora is a modular, microservices-based video streaming platform built with scalability, personalization, and maintainability in mind. It is composed of four independent services that handle different aspects of the system.
+
+---
+
+## Microservices Architecture
+
+###  1. User Service
+
+Handles user management, authentication, and profile operations.
+
+**Key Features:**
+- JWT-based authentication
+- Password reset & update functionality
+- Kafka integration for user events
+
+**Endpoints:**
+- `POST /api/auth/register` – Register a new user
+- `POST /api/auth/login` – Authenticate and retrieve JWT
+- `GET /api/user/profile` – Get current user's profile
+- `PUT /api/user/profile` – Update user profile
+- `POST /api/password/forgot/reset/change` – Password management
+
+---
+
+###  2. Subscription Service
+
+Manages subscription plans and integrates with Stripe for payments.
+
+**Key Features:**
+- Stripe Checkout sessions
+- Webhook handling for payment success
+- Kafka integration with user and tier events
+
+**Endpoints:**
+- `POST /api/subscriptions` – Create a subscription
+- `GET /api/subscriptions` – List all subscriptions
+- `GET /api/subscriptions/user/{userId}` – Subscriptions by user
+- `PUT /api/subscriptions/{id}/cancel` – Cancel subscription
+- `POST /api/subscriptions/checkout` – Create Stripe session
+- `POST /webhook` – Stripe webhook endpoint
+
+---
+
+###  3. Media Service
+
+Handles video metadata, streaming, and user content interaction.
+
+**Key Features:**
+- HLS video streaming
+- Rating and review system
+- Search and filtering for video content
+
+**Endpoints:**
+- `POST /continue-watching` – Saves or updates the playback progress of a video for the authenticated user.
+- `GET /continue-watching` – Retrieves all continue-watching entries for the authenticated user.
+- `POST /favorites` – Adds a video to the authenticated user's favorites list.
+- `GET /favorites` – Retrieves the list of favorite videos for the authenticated user.
+- `DELETE /favorites` – Removes a video from the authenticated user's favorites list.
+- `POST /ratings` – Submits or updates a rating and optional review for a video by the authenticated user.
+- `GET /ratings/{videoId}` – Retrieves all ratings and reviews for a specific video.
+- `GET /ratings/my/{videoId}` – Retrieves the authenticated user's rating and review for a specific video.
+- `GET /stream/{videoId}/{fileName}` – Streams a specific video file for a given video ID.
+- `GET /videos` – Retrieves all available video metadata records.
+- `GET /videos/{id}` – Retrieves metadata for a specific video by its ID.
+- `GET /videos/search?q={keyword}` – Searches videos by a given keyword.
+- `GET /videos/genre/{genre}` – Retrieves videos that belong to a specific genre.
+- `GET /videos/tags/{tag}` – Retrieves videos associated with a specific tag.
+- `GET /videos/content-rating/{rating}` – Retrieves videos based on content rating (e.g., PG, R).
+- `GET /videos/recent` – Retrieves the most recently added videos.
+- `POST /watch-history` – Saves a new watch history entry for the authenticated user.
+- `GET /watch-history` – Retrieves the watch history for the authenticated user.
+
+---
+
+### 4. Profile Service
+
+Manages user personalization: favorites, watch history, and continue-watching.
+
+**Key Features:**
+- MongoDB-based storage
+- Favorite & history management
+- Watch progress tracking
+
+**Endpoints:**
+- `GET /api/profiles` – Retrieves the profile information of the authenticated user.
+- `GET /api/profiles/movies` – Retrieves the list of movies associated with the authenticated user.
+- `GET /api/profiles/statistics` – Retrieves genre statistics (counts) for the authenticated user's watched movies, returned as a map where keys are genre 
+
+---
+
+##  Unit Testing
+
+All services include dedicated unit tests using:
+- `JUnit`
+- `Mockito`
+- `Spring Boot Test`
+
+Tests cover service logic, controller behavior, and basic integration scenarios.
+
+---
+
+##  Technologies Used
+
+- **Java + Spring Boot**
+- **MongoDB** & **PostgreSQL**
+- **Kafka** – for asynchronous events
+- **Stripe API** – for payments
+- **JWT** – for secure auth
+- **Docker** – for containerization
+
+---
+## Setup and Execution
+
+Follow these steps to start each component of the Anora Streaming Service:
+
+### 1. Start Kafka and Zookeeper
+
+Launch Kafka and Zookeeper for asynchronous messaging between microservices:
+
+```bash
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties
+
+### 2. Start Redis
+Run Redis for caching user preferences and other data:
+
+```bash
+redis-server
+
+### 3. Run Microservices
+Start each Spring Boot microservice in the following order to meet dependency requirements:
+
+## User Service (Authentication & Profiles)
+
+```bash
+cd user-service
+mvn spring-boot:run
+
+## Subscription Service (Payments via Stripe)
+
+```bash
+cd subscription-service
+mvn spring-boot:run
+
+## Media Service (Video Streaming & Metadata)
+
+```bash
+cd media-service
+mvn spring-boot:run
+
+## Profile Service (User Personalization & Stats)
+
+```bash
+cd profile-service
+mvn spring-boot:run
+
+### 4. Expose Stripe Webhook with Ngrok
+Expose the Subscription Service’s webhook endpoint (POST /webhook) to Stripe:
+
+```bash
+ngrok http 8082
+
+5. Run Front-end Server 
+
+```bash
+cd frontend
+npm install
+npm start
+
+Configuration Notes
+
+Verify application.properties or application.yml files in each service for correct database and broker configuration.
+
+Ensure MongoDB and PostgreSQL are running before starting any service.
+
+For production or easier local setup, consider using Docker. Check for a docker-compose.yml file if provided.
+
+Troubleshooting
+
+Port Conflicts: Ensure the required ports (e.g., 8080, 8081, 8082) are not in use.
+
+Database Errors: Check if MongoDB and PostgreSQL are accessible and configured correctly.
+
+Kafka Issues: Make sure both Zookeeper and Kafka are running and accessible.
+
+Ngrok Issues: Restart Ngrok if the tunnel is unresponsive or changes.
 
 
-=== Nje pershkrim i shkurter dhe i sakte per fajllin "Client.java" ===
-
-Programi Client lejon perdoruesin te ngarkoje dhe shkarkoje skedare ne menyre te sigurte nga serveri duke perdorur nje kombinim te algorimteve te kriptografise RSA dhe AES per te mbrojtur celesat dhe te dhenat. Perdoruimi i JavaFX i mundeson nje nderfaqe grafike per zgjedhjen dhe ruajten e skedareve.
-Konstruktori i klienti gjeneron nje cift celesash RSA per enkriptim dhe dekriptim.
-Metoda connectAndTransferFile lidh klientin me serverin; pranon celesin publik te serverit; gjeneron dhe dergon celesin AES te enkriptuar te serveri; enkripton dhe transferon skedarin e zgjedhur te serveri;
-Metoda connectAndDownloadFile lidh klientin me serverin; pranon celesin publik te serverit; gjeneron dhe dergon celesin AES te enkriptuar te serveri; kerkon dhe shkarkon nje skedar nga serveri duke e dekriptuar ate lokalisht.
-Metoda receiveServerPublicKey pranon dhe dekodon celesin publik te serverit.
-Metoda sendEncryptedAESKey enkripton celesin AES me celesin publik te serverit dhe e dergon ate.
-Metoda transferFile enkripton skedarin me celesin AES dhe e dergon ate te serveri.
-Metoda requestFile kerkon nje skedar nga serveri dhe e ruan ate pasi ta kete dekriptuar.
-Metoda run pyet perdoruesin nese deshiron te ngarkoje apo shkarkoje nje skedar dhe therret metodat perkatese.
-Metoda uploadFile perdor nje dialog te FileChooser per te zgjedhur nje skedar per ngarkim dhe therret 'connectAndTransferFile'.
-Metoda downloadFile lidh klientin me serverin, merr listen e skedareve nga serveri dhe lejon perdoruesin te zgjedhe nje skedar per shkarkim.
-Metoda start therret metoden 'run' per te nisur aplikacionin JavaFX.
-Metoda main e fillon aplikacionin JavaFX.
-Kriptografia e perdorur eshte RSAUtils dhe AESUtils.
-
-
-=== Nje pershkrim i shkurter dhe i sakte per fajllin "Server.java" ===
-
-Ky program siguron transferimin e sigurt te skedareve duke perdorur nje kombinim te algoritmeve RSA dhe AES per te mbrojutr celesat dhe te dhenat. Serveri pranon komandat nga klienti per te listuar skedaret, per te derguar skedare dhe per te pranuar skedare te rinj.
- Metodat kryesore main gjeneron nje celes RSA per enkriptim dhe dekriptim; straton nje 'serversocket' ne portin e specifikuar dhe pret per lidhje nga klientet dhe kur nje klient lidhet, thirret 'handleclient' per te trajtuar komunikimin me klientin. 
-Metoda handleclient dergon celesin publik RSA te klienti pastaj pranon celesin AES te enkriptuar nga klienti dhe e dekripton duke perdorur celesin privat RSA. Ne fund pranon dhe trajton komandat nga klienti 'list_files', 'request_file.
-Metoda listFiles liston te gjithe skedaret ne dosjen e serverit dhe i dergon emrat e tyre te klienti.
-Metoda receiveFile pranon nje skedar te enkriptuar nga klienti dhe e ruan ate ne dosjen e serverit. Dekripton skedarin e pranuar duke perdorur celesin AES dhe e run skedarin e dekriptuar.
-Metoda sendFile dergon nje skedar te kerkuar nga klienti. FIllimisht, enkripton skedarin duke perdorur celesin AES dhe me pas e dergon te klienti.
-Kriptografia e perdorur eshte RSAUtils dhe AESUtils.
-
-
-=== Nje pershkrim i shkurter dhe i sakte per "RSAUtils.java" ===
-
-Kjo klase eshte esenciale per realizimin e funksionaliteteve te sigurise ne aplikacionin dhe transferimin e skedareve duke siguruar qe te dhenat te jene te mbrojtura gjate komunikimit mes klientit dhe serverit.
-'generateKeyPair' gjeneron nje cift celesash RSA publik dhe privat me nje madhesi celesi prej 2048 bitesh.
-'encrypt' enkripton nje string duke perdorur celesin publik te dhene. Perdor algoritmin RSA per enkriptim dhe kthen te dhenat e enkriptuara ne forme te koduar me Base64.
-'decrypt' dekripton nje string te enkriptuar duke perdorur celesin privat te dhene. Perdor algoritmin RSA per dekriptim dhe kthen te dhenat e dekriptuara si tekst te thjeshte.
-'decodePublicKey' dekodon nje string te koduar me Base64 qe perfaqeson nje celes publik. Rikrijon objektin e celesit publik nga ky string duke perdorur specifikimin X509.
-
-
-=== Nje pershkrim i shkurter dhe i sakte per fajllin "AESUtils.java" ===
-
-Kjo klase eshte esenciale per realizimin e enkriptimit dhe dekriptimit te te dhenave dhe skedareve ne aplikacionin per transferimin e sigurt te skedareve duke perdorur algoritmin AES per te siguruar konfidencialitetin e te dhenave.
-'generateAESKey' gjeneron nje celes AES me madhesi 256-bitesh per enkriptim dhe dekriptim.
-'encryptAESKey' kodon celesin AES ne formatin Base64 per tu ruajtur ose transmetuar ne menyre te sigurt.
-'decryptAESKey' dekodon nje string te koduar me Base64 dhe rikrijon celesin AES nga ky string.
-'encryptFile' enkripton permbajtjen e nje skedari te dhene duke perdorur nje celes AES dhe e ruan ate ne nje skedar te daljes. Kontrollon ekzistencen e skedarit hyres dhe perdor algoritmin AES per enkriptim me nje bufer 4096-byte.
-'decryptFile' dekripton permbajtjen e nje skedari te enkriptuar duke perdorur nje celes AES dhe e run ate ne nje skedar te daljes. Kontrollon ekzistencen e skedarit hyres dhe perdor algoritmin AES per dekriptim me nje celes 4096-bitesh.
